@@ -1,6 +1,8 @@
 // src/components/AuthPage/AuthPage.tsx
 import React, { useState } from 'react';
 import styles from './AuthPage.module.css';
+import { useNavigate } from 'react-router-dom';
+import { api } from '../../api/axiosInstance';
 
 const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,17 +11,29 @@ const AuthPage: React.FC = () => {
   const [password2, setPassword2] = useState('');
   const [name, setName] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLogin) {
-      console.log('Login submitted:', { email, password });
-    } else {
-      if (password !== password2) {
-        console.error('Passwords do not match');
-        return;
+
+    try {
+      if (isLogin) {
+        const response = await api.post('/guest/login', { email, password });
+        console.log(response.data);
+        localStorage.setItem('user', JSON.stringify(response.data.payload));
+        navigate('/PublicWall');
       } else {
-        console.log('Signup submitted:', { name, email, password });
+        if (password !== password2) {
+          return alert('Passwords do not match');
+        }
+
+        const response = await api.post('/guest/signup', { name, email, password });
+        localStorage.setItem('user', JSON.stringify(response.data.payload));
+        navigate('/PublicWall');
       }
+    } catch (error) {
+      console.error('Auth error:', error);
+      //alert(error.response?.data?.message || 'Something went wrong');
     }
   };
 
@@ -80,14 +94,18 @@ const AuthPage: React.FC = () => {
               placeholder="••••••••"
               required
             />
-            <label>Repeat Password</label>
-            <input
-              type="password"
-              value={password2}
-              onChange={(e) => setPassword2(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
+            {!isLogin && (
+              <>
+                <label>Repeat Password</label>
+                <input
+                  type="password"
+                  value={password2}
+                  onChange={(e) => setPassword2(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </>
+            )}
           </div>
 
           <button type="submit" className={styles.submitButton}>

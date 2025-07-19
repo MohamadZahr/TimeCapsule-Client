@@ -10,6 +10,7 @@ const PublicWallPage: React.FC = () => {
     const [filterDate, setFilterDate] = useState('');
     const [filterCreator, setFilterCreator] = useState('');
 
+
     // Sample data - in a real app this would come from an API
     useEffect(() => {
         const mockCapsules: Capsule[] = [
@@ -107,17 +108,6 @@ const PublicWallPage: React.FC = () => {
 
     return (
         <div className={styles.container}>
-            {/* Header */}
-            <header className={styles.header}>
-                <div className={styles.logo}>TimeLock</div>
-                <div className={styles.headerActions}>
-                    <button className={styles.profileButton}>
-                        <span className={styles.profileInitial}>U</span>
-                    </button>
-                    <button className={styles.logoutButton}>Logout</button>
-                </div>
-            </header>
-
             {/* Main Content */}
             <main className={styles.main}>
                 <h1 className={styles.pageTitle}>Public Time Capsules</h1>

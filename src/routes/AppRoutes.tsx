@@ -10,8 +10,9 @@ const AppRoutes = () => {
          <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/SignIn" element={<AuthPage />} />
-            <Route path="/PublicWall" element={<PublicWallPage />} />
+            
             <Route element={<MainLayout />}>
+               <Route path="/PublicWall" element={<PublicWallPage />} />
             </Route>
          </Routes>
       </>

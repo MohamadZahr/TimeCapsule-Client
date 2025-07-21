@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './CountdownCapsule.module.css';
 import type { Capsule } from '../../utils/types';
 
+
 interface CountdownCapsuleContainerProps {
   capsule: Capsule;
 }
@@ -11,7 +12,6 @@ interface TimeRemaining {
   hours: number;
   minutes: number;
   seconds: number;
-  isRevealed: boolean;
 }
 
 const CountdownCapsuleContainer: React.FC<CountdownCapsuleContainerProps> = ({ capsule }) => {
@@ -20,24 +20,13 @@ const CountdownCapsuleContainer: React.FC<CountdownCapsuleContainerProps> = ({ c
     hours: 0,
     minutes: 0,
     seconds: 0,
-    isRevealed: false
   });
 
+  
   const calculateTimeRemaining = (): TimeRemaining => {
     const now = new Date().getTime();
     const revealDate = new Date(capsule.revealed_at).getTime();
     const difference = revealDate - now;
-
-    if (difference <= 0) {
-      return {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        isRevealed: true
-      };
-    }
-
     const days = Math.floor(difference / (1000 * 60 * 60 * 24));
     const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
@@ -48,7 +37,6 @@ const CountdownCapsuleContainer: React.FC<CountdownCapsuleContainerProps> = ({ c
       hours,
       minutes,
       seconds,
-      isRevealed: false
     };
   };
 
@@ -57,7 +45,6 @@ const CountdownCapsuleContainer: React.FC<CountdownCapsuleContainerProps> = ({ c
       setTimeRemaining(calculateTimeRemaining());
     }, 1000);
 
-    // Initial calculation
     setTimeRemaining(calculateTimeRemaining());
 
     return () => clearInterval(timer);
@@ -68,14 +55,6 @@ const CountdownCapsuleContainer: React.FC<CountdownCapsuleContainerProps> = ({ c
   };
 
   const getCountdownDisplay = () => {
-    if (timeRemaining.isRevealed) {
-      return (
-        <div className={styles.revealedText}>
-          ✨ Revealed!
-        </div>
-      );
-    }
-
     return (
       <div className={styles.countdown}>
         {timeRemaining.days > 0 && (
@@ -101,7 +80,12 @@ const CountdownCapsuleContainer: React.FC<CountdownCapsuleContainerProps> = ({ c
   };
 
   return (
-    <div className={`${styles.capsule} ${timeRemaining.isRevealed ? styles.revealed : ''}`}>
+    <div 
+      className={styles.capsule}
+      style={{
+        '--accent-color': capsule.color,
+      } as React.CSSProperties}
+    >
       <div className={styles.vibrantAccent}></div>
       <div className={styles.capsuleContent}>
         <h3 className={styles.capsuleTitle}>{capsule.title}</h3>

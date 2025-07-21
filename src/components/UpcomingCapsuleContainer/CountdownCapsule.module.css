@@ -12,35 +12,22 @@
   flex-direction: column;
   border: 1px solid rgba(119, 141, 169, 0.2);
 }
-
 .capsule:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
-
-.capsule.revealed {
-  background: linear-gradient(135deg, #1b263b 0%, #2d3748 100%);
-  border-color: rgba(6, 214, 160, 0.4);
-}
-
 .vibrantAccent {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 5px;
-  background: #06d6a0;
+  background: var(--accent-color, #06d6a0); /* Fallback to original */
   transition: height 0.3s ease;
 }
-
-.capsule.revealed .vibrantAccent {
-  background: linear-gradient(90deg, #06d6a0, #4dabf7);
-}
-
 .capsule:hover .vibrantAccent {
   height: 8px;
 }
-
 .capsuleContent {
   padding: 1.5rem;
   flex: 1;
@@ -48,7 +35,6 @@
   flex-direction: column;
   justify-content: space-between;
 }
-
 .capsuleTitle {
   font-size: 1.3rem;
   font-weight: 600;
@@ -58,7 +44,6 @@
   display: inline-block;
   color: #e0e1dd;
 }
-
 .capsuleTitle::after {
   content: '';
   position: absolute;
@@ -66,27 +51,23 @@
   left: 0;
   width: 40px;
   height: 2px;
-  background: #06d6a0;
+  background: var(--accent-color, #06d6a0); /* Fallback to original */
   border-radius: 2px;
   transition: width 0.3s ease;
 }
-
 .capsule:hover .capsuleTitle::after {
   width: 80px;
 }
-
 .capsuleCreator {
   font-size: 0.9rem;
   color: #a8dadc;
   font-weight: 400;
   margin-bottom: 1rem;
 }
-
 .byText {
   opacity: 0.7;
   margin-right: 5px;
 }
-
 .countdownContainer {
   margin: 0.8rem 0;
   flex: 1;
@@ -94,7 +75,6 @@
   align-items: center;
   justify-content: center;
 }
-
 .countdown {
   display: flex;
   gap: 0.8rem;
@@ -102,22 +82,19 @@
   justify-content: center;
   flex-wrap: wrap;
 }
-
 .timeUnit {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 35px;
 }
-
 .timeValue {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #06d6a0;
+  color: var(--accent-color, #06d6a0); /* Fallback to original */
   line-height: 1;
-  text-shadow: 0 0 10px rgba(6, 214, 160, 0.3);
+  text-shadow: 0 0 10px var(--accent-rgba, rgba(6, 214, 160, 0.3)); /* Fallback */
 }
-
 .timeLabel {
   font-size: 0.7rem;
   color: #a8dadc;
@@ -126,27 +103,6 @@
   letter-spacing: 0.5px;
   opacity: 0.8;
 }
-
-.revealedText {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #06d6a0;
-  text-align: center;
-  animation: pulse 2s infinite;
-  text-shadow: 0 0 15px rgba(6, 214, 160, 0.5);
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
 .revealDate {
   font-size: 0.8rem;
   color: #778da9;
@@ -156,55 +112,39 @@
   border-top: 1px solid rgba(119, 141, 169, 0.1);
   font-weight: 400;
 }
-
-.capsule.revealed .revealDate {
-  color: #06d6a0;
-  font-weight: 500;
-}
-
 @media (max-width: 768px) {
   .capsule {
     height: 180px;
   }
-  
   .capsuleContent {
     padding: 1.2rem;
   }
-  
   .timeValue {
     font-size: 1.2rem;
   }
-  
   .countdown {
     gap: 0.6rem;
   }
 }
-
 @media (max-width: 480px) {
   .capsule {
     height: 160px;
   }
-  
   .capsuleContent {
     padding: 1rem;
   }
-  
   .capsuleTitle {
     font-size: 1.1rem;
   }
-  
   .timeValue {
     font-size: 1rem;
   }
-  
   .timeLabel {
     font-size: 0.6rem;
   }
-  
   .countdown {
     gap: 0.4rem;
   }
-  
   .timeUnit {
     min-width: 30px;
   }

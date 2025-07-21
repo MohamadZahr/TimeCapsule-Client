@@ -26,28 +26,7 @@
   gap: 1.5rem;
 }
 
-.profileButton {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #415a77;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
 
-.profileInitial {
-  font-weight: 600;
-  font-size: 1.2rem;
-}
-
-.profileButton:hover {
-  background: #778da9;
-  transform: scale(1.05);
-}
 
 .logoutButton {
   background: #a0403d;

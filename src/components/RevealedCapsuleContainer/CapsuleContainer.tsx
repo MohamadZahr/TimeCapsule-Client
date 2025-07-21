@@ -8,7 +8,12 @@ interface CapsuleContainerProps {
 
 const CapsuleContainer: React.FC<CapsuleContainerProps> = ({ capsule }) => {
   return (
-    <div className={styles.capsule}>
+    <div
+      className={styles.capsule}
+      style={{
+        '--accent-color': capsule.color,
+      } as React.CSSProperties}
+    >
       <div className={styles.vibrantAccent}></div>
       <div className={styles.capsuleContent}>
         <h3 className={styles.capsuleTitle}>{capsule.title}</h3>
@@ -19,5 +24,5 @@ const CapsuleContainer: React.FC<CapsuleContainerProps> = ({ capsule }) => {
     </div>
   );
 };
-  
+
 export default CapsuleContainer;

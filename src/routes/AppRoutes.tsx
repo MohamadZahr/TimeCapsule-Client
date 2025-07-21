@@ -4,6 +4,7 @@ import LandingPage from '../pages/Landing/LandingPage';
 import AuthPage from '../pages/Auth/AuthPage';
 import PublicWallPage from '../pages/PublicWall/PublicWallPage';
 import CreateCapsulePage from '../pages/CreateCapsule/CreateCapsulePage';
+import PrivateWallPage from '../pages/PrivateWall/PrivateWallPage';
 
 const AppRoutes = () => {
    return (
@@ -14,6 +15,7 @@ const AppRoutes = () => {
             
             <Route element={<MainLayout />}>
                <Route path="/PublicWall" element={<PublicWallPage />} />
+               <Route path="/PrivateWall" element={<PrivateWallPage />} />
                <Route path="/CreateCapsule" element={<CreateCapsulePage />} />
             </Route>
          </Routes>

@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './PublicWallPage.module.css';
 import type { Capsule } from '../../utils/types';
 import RevealedWall from '../../components/RevealedWall/RevealedWall';
+import UpcomingWall from '../../components/UpcomingWall/UpcomingWall';
 import { api } from '../../api/axiosInstance';
 
 const PublicWallPage: React.FC = () => {
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [showFilters, setShowFilters] = useState(false);
     const [capsules, setCapsules] = useState<Capsule[]>([]);
+    const [upcomingCapsules, setUpcomingCapsules] = useState<Capsule[]>([]);
     const [filterCountry, setFilterCountry] = useState('');
     const [filterMood, setFilterMood] = useState('');
     const [filterTimeRange, setFilterTimeRange] = useState('');
+    const [activeWall, setActiveWall] = useState<'revealed' | 'upcoming'>('revealed');
 
     const moods = ['happy', 'sad', 'reflective', 'nostalgic', 'serious', 'funny', 'romantic', 'inspirational'];
 
@@ -23,8 +28,18 @@ const PublicWallPage: React.FC = () => {
         }
     };
 
+    const fetchUpcomingCapsules = async () => {
+        try {
+          const response = await api.get('/public/upcoming');
+          setUpcomingCapsules(response.data.payload || []);
+        } catch (error) {
+          console.error('Failed to fetch upcoming capsules:', error);
+        }
+    };
+
     useEffect(() => {
         fetchCapsules();
+        fetchUpcomingCapsules();
     }, []);
 
     const getTimeRangeFilter = (capsule: Capsule) => {
@@ -57,12 +72,52 @@ const PublicWallPage: React.FC = () => {
         return matchesSearch && matchesCountry && matchesMood && matchesTimeRange;
     });
 
+    const filteredUpcomingCapsules = upcomingCapsules.filter(capsule => {
+        const matchesSearch = capsule.title.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesCountry = filterCountry ?
+            capsule.location?.country?.toLowerCase().includes(filterCountry.toLowerCase()) :
+            true;
+
+        const matchesMood = filterMood ?
+            capsule.tags?.some(tag => tag.mood?.toLowerCase() === filterMood.toLowerCase()) :
+            true;
+
+        return matchesSearch && matchesCountry && matchesMood;
+    });
+
     return (
         <div className={styles.container}>
             {/* Main Content */}
             <main className={styles.main}>
-                <h1 className={styles.pageTitle}>Public Time Capsules</h1>
-                <p className={styles.pageSubtitle}>Explore capsules shared by our community</p>
+                <div className={styles.header}>
+                    <div className={styles.titleSection}>
+                        <h1 className={styles.pageTitle}>Public Time Capsules</h1>
+                        <p className={styles.pageSubtitle}>Explore capsules shared by our community</p>
+                    </div>
+                    <button 
+                        className={styles.createButton}
+                        onClick={() => navigate('/CreateCapsule')}
+                    >
+                        Create Capsule
+                    </button>
+                </div>
+
+                {/* Wall Toggle */}
+                <div className={styles.wallToggle}>
+                    <button
+                        className={`${styles.toggleButton} ${activeWall === 'revealed' ? styles.active : ''}`}
+                        onClick={() => setActiveWall('revealed')}
+                    >
+                        Revealed Capsules
+                    </button>
+                    <button
+                        className={`${styles.toggleButton} ${activeWall === 'upcoming' ? styles.active : ''}`}
+                        onClick={() => setActiveWall('upcoming')}
+                    >
+                        Upcoming Capsules
+                    </button>
+                </div>
 
                 {/* Search and Filters */}
                 <div className={styles.searchSection}>
@@ -85,17 +140,19 @@ const PublicWallPage: React.FC = () => {
                     {showFilters && (
                         <div className={styles.filtersPanel}>
                             <div className={styles.filterGroup}>
-                                <label>Country:</label>
+                                <label className={styles.filterLabel}>Country:</label>
                                 <input
                                     type="text"
                                     placeholder="Filter by country..."
+                                    className={styles.filterInput}
                                     value={filterCountry}
                                     onChange={(e) => setFilterCountry(e.target.value)}
                                 />
                             </div>
                             <div className={styles.filterGroup}>
-                                <label>Mood:</label>
+                                <label className={styles.filterLabel}>Mood:</label>
                                 <select
+                                    className={styles.filterSelect}
                                     value={filterMood}
                                     onChange={(e) => setFilterMood(e.target.value)}
                                 >
@@ -108,8 +165,9 @@ const PublicWallPage: React.FC = () => {
                                 </select>
                             </div>
                             <div className={styles.filterGroup}>
-                                <label>Time Range:</label>
+                                <label className={styles.filterLabel}>Time Range:</label>
                                 <select
+                                    className={styles.filterSelect}
                                     value={filterTimeRange}
                                     onChange={(e) => setFilterTimeRange(e.target.value)}
                                 >
@@ -135,7 +193,11 @@ const PublicWallPage: React.FC = () => {
                 </div>
 
                 {/* Capsules Grid */}
-                <RevealedWall capsules={filteredCapsules} />
+                {activeWall === 'revealed' ? (
+                    <RevealedWall capsules={filteredCapsules} />
+                ) : (
+                    <UpcomingWall capsules={filteredUpcomingCapsules} />
+                )}
             </main>
         </div>
     );

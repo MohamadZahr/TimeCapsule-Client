@@ -1,110 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import styles from './PublicWallPage.module.css';
 import type { Capsule } from '../../utils/types';
-import CapsuleContainer from '../../components/Revealed CapsuleContainer/CapsuleContainer';
-
+import RevealedWall from '../../components/RevealedWall/RevealedWall';
+import { api } from '../../api/axiosInstance';
 
 const PublicWallPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showFilters, setShowFilters] = useState(false);
     const [capsules, setCapsules] = useState<Capsule[]>([]);
-    const [filterDate, setFilterDate] = useState('');
-    const [filterCreator, setFilterCreator] = useState('');
+    const [filterCountry, setFilterCountry] = useState('');
+    const [filterMood, setFilterMood] = useState('');
+    const [filterTimeRange, setFilterTimeRange] = useState('');
 
+    const moods = ['happy', 'sad', 'reflective', 'nostalgic', 'serious', 'funny', 'romantic', 'inspirational'];
 
-    // Sample data - in a real app this would come from an API
+    const fetchCapsules = async () => {
+        try {
+          const response = await api.get('/public/revealed');
+          setCapsules(response.data.payload || []);
+        } catch (error) {
+          console.error('Failed to fetch capsules:', error);
+        }
+    };
+
     useEffect(() => {
-        const mockCapsules: Capsule[] = [
-            {
-                id: 1,
-                user_id: 101,
-                user_name: "Alex Johnson",
-                title: "College Graduation Memories",
-                message: "",
-                private: false,
-                surprise: false,
-                color: "#5e8b7e",
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                id: 2,
-                user_id: 102,
-                user_name: "Sam Rivera",
-                title: "Trip to Japan",
-                message: "",
-                private: false,
-                surprise: true,
-                color: "#a27b5c",
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                id: 3,
-                user_id: 103,
-                user_name: "Taylor Kim",
-                title: "First Job Experience",
-                message: "",
-                private: false,
-                surprise: false,
-                color: "#3f72af",
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                id: 4,
-                user_id: 104,
-                user_name: "Jordan Smith",
-                title: "30th Birthday Reflections",
-                message: "",
-                private: false,
-                surprise: true,
-                color: "#2c786c",
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                id: 5,
-                user_id: 105,
-                user_name: "Morgan Lee",
-                title: "2023 Tech Predictions",
-                message: "",
-                private: false,
-                surprise: false,
-                color: "#ff9a76",
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                id: 6,
-                user_id: 106,
-                user_name: "Casey Brown",
-                title: "Family Reunion",
-                message: "",
-                private: false,
-                surprise: true,
-                color: "#6a67ce",
-                createdAt: new Date(),
-                updatedAt: new Date()
-            }
-        ];
-
-        setCapsules(mockCapsules);
+        fetchCapsules();
     }, []);
 
+    const getTimeRangeFilter = (capsule: Capsule) => {
+        const revealDate = new Date(capsule.revealed_at || capsule.created_at);
+        const now = new Date();
+        const diffTime = now.getTime() - revealDate.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays <= 7) return 'week';
+        if (diffDays <= 30) return 'month';
+        if (diffDays <= 365) return 'year';
+        return 'older';
+    };
+
     const filteredCapsules = capsules.filter(capsule => {
-        const matchesSearch = capsule.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            capsule.user_name?.toLowerCase().includes(searchTerm.toLowerCase());
-
-        const matchesDate = filterDate ?
-            new Date(capsule.revealed_at || capsule.createdAt).toISOString().split('T')[0] === filterDate :
+        const matchesSearch = capsule.title.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesCountry = filterCountry ?
+            capsule.location?.country?.toLowerCase().includes(filterCountry.toLowerCase()) :
             true;
 
-        const matchesCreator = filterCreator ?
-            capsule.user_name?.toLowerCase().includes(filterCreator.toLowerCase()) :
+        const matchesMood = filterMood ?
+            capsule.tags?.some(tag => tag.mood?.toLowerCase() === filterMood.toLowerCase()) :
             true;
 
-        return matchesSearch && matchesDate && matchesCreator;
+        const matchesTimeRange = filterTimeRange ?
+            getTimeRangeFilter(capsule) === filterTimeRange :
+            true;
+
+        return matchesSearch && matchesCountry && matchesMood && matchesTimeRange;
     });
 
     return (
@@ -135,27 +85,47 @@ const PublicWallPage: React.FC = () => {
                     {showFilters && (
                         <div className={styles.filtersPanel}>
                             <div className={styles.filterGroup}>
-                                <label>Reveal Date:</label>
+                                <label>Country:</label>
                                 <input
-                                    type="date"
-                                    value={filterDate}
-                                    onChange={(e) => setFilterDate(e.target.value)}
+                                    type="text"
+                                    placeholder="Filter by country..."
+                                    value={filterCountry}
+                                    onChange={(e) => setFilterCountry(e.target.value)}
                                 />
                             </div>
                             <div className={styles.filterGroup}>
-                                <label>Creator:</label>
-                                <input
-                                    type="text"
-                                    placeholder="Filter by creator..."
-                                    value={filterCreator}
-                                    onChange={(e) => setFilterCreator(e.target.value)}
-                                />
+                                <label>Mood:</label>
+                                <select
+                                    value={filterMood}
+                                    onChange={(e) => setFilterMood(e.target.value)}
+                                >
+                                    <option value="">All moods</option>
+                                    {moods.map(mood => (
+                                        <option key={mood} value={mood}>
+                                            {mood.charAt(0).toUpperCase() + mood.slice(1)}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className={styles.filterGroup}>
+                                <label>Time Range:</label>
+                                <select
+                                    value={filterTimeRange}
+                                    onChange={(e) => setFilterTimeRange(e.target.value)}
+                                >
+                                    <option value="">All time</option>
+                                    <option value="week">Past week</option>
+                                    <option value="month">Past month</option>
+                                    <option value="year">Past year</option>
+                                    <option value="older">Older than a year</option>
+                                </select>
                             </div>
                             <button
                                 className={styles.clearFilters}
                                 onClick={() => {
-                                    setFilterDate('');
-                                    setFilterCreator('');
+                                    setFilterCountry('');
+                                    setFilterMood('');
+                                    setFilterTimeRange('');
                                 }}
                             >
                                 Clear Filters
@@ -165,27 +135,7 @@ const PublicWallPage: React.FC = () => {
                 </div>
 
                 {/* Capsules Grid */}
-                <div className={styles.capsulesGrid}>
-                    {filteredCapsules.length > 0 ? (
-                        filteredCapsules.map(capsule => (
-                            <CapsuleContainer key={capsule.id} capsule={capsule} />
-                        ))
-                    ) : (
-                        <div className={styles.noResults}>
-                            <p>No capsules found matching your search</p>
-                            <button
-                                className={styles.clearSearch}
-                                onClick={() => {
-                                    setSearchTerm('');
-                                    setFilterDate('');
-                                    setFilterCreator('');
-                                }}
-                            >
-                                Clear Search
-                            </button>
-                        </div>
-                    )}
-                </div>
+                <RevealedWall capsules={filteredCapsules} />
             </main>
         </div>
     );

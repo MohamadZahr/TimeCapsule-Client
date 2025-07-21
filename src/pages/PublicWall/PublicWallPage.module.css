@@ -121,37 +121,6 @@
   border-color: #415a77;
 }
 
-.capsulesGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-
-.noResults {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 3rem;
-  background: rgba(13, 27, 42, 0.5);
-  border-radius: 10px;
-  border: 1px dashed rgba(119, 141, 169, 0.3);
-}
-
-.clearSearch {
-  margin-top: 1rem;
-  padding: 0.7rem 1.5rem;
-  background: transparent;
-  color: #a8dadc;
-  border: 1px solid rgba(119, 141, 169, 0.3);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.clearSearch:hover {
-  background: rgba(119, 141, 169, 0.1);
-  border-color: #415a77;
-}
 
 /* Responsive design */
 @media (max-width: 768px) {

@@ -20,6 +20,7 @@ const CapsuleContainer: React.FC<CapsuleContainerProps> = ({ capsule }) => {
         <p className={styles.capsuleCreator}>
           <span className={styles.byText}>by</span> {capsule.user?.name || "Anonymous"}
         </p>
+
       </div>
     </div>
   );

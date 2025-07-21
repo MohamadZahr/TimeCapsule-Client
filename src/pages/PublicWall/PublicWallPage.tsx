@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './PublicWallPage.module.css';
 import type { Capsule } from '../../utils/types';
-import CapsuleContainer from './components/CapsuleContainer/CapsuleContainer';
+import CapsuleContainer from '../../components/Revealed CapsuleContainer/CapsuleContainer';
+
 
 const PublicWallPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');

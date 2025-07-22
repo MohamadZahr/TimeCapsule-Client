@@ -14,10 +14,9 @@ const CapsuleDetailsPage: React.FC = () => {
         const storedCapsule = localStorage.getItem('selectedCapsule');
         if (storedCapsule) {
           const parsedCapsule: Capsule = JSON.parse(storedCapsule);
-                    parsedCapsule.revealed_at = new Date(parsedCapsule.revealed_at);
+          parsedCapsule.revealed_at = new Date(parsedCapsule.revealed_at);
           parsedCapsule.created_at = new Date(parsedCapsule.created_at);
           parsedCapsule.updated_at = new Date(parsedCapsule.updated_at);
-          
           setCapsule(parsedCapsule);
         } else {
           navigate(-1);
@@ -43,8 +42,6 @@ const CapsuleDetailsPage: React.FC = () => {
     });
   };
 
-
-
   const getMediaUrl = (path: string | null): string | undefined => {
     if (!path) return undefined;
     return `http://127.0.0.1:8000/${path}`;
@@ -66,117 +63,87 @@ const CapsuleDetailsPage: React.FC = () => {
     );
   }
 
-
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <button onClick={() => navigate(-1)} className={styles.backButton}>
-          Back
-        </button>
-      </div>
+      <button onClick={() => navigate(-1)} className={styles.backButton}>
+        Back
+      </button>
 
       <div className={styles.capsuleCard}>
-        <div 
-          className={styles.colorStrip} 
-          style={{ backgroundColor: capsule.color }}
-        />
-        
-        <div className={styles.capsuleHeader}>
+        <div className={styles.colorStrip} style={{ backgroundColor: capsule.color }} />
+
+        <div className={styles.header}>
           <h1 className={styles.title}>{capsule.title}</h1>
           <div className={styles.metadata}>
-            <span className={styles.author}>
-              by {capsule.user?.name || 'Unknown'}
-            </span>
-            <span className={styles.date}>
-              Created: {formatDate(capsule.created_at)}
-            </span>
+            <span>by {capsule.user?.name || 'Unknown'}</span>
+            <span>Created: {formatDate(capsule.created_at)}</span>
           </div>
         </div>
 
         <div className={styles.content}>
-            <div className={styles.revealedContent}>
-              <div className={styles.contentColumns}>
-                <div className={styles.leftColumn}>
-                  <div className={styles.messageContainer}>
-                    <h3>Message</h3>
-                    <p className={styles.message}>{capsule.message}</p>
+          <div className={styles.mainContent}>
+            <div className={styles.leftColumn}>
+              <div className={styles.messageSection}>
+                <h3>Message</h3>
+                <p className={styles.message}>{capsule.message}</p>
+              </div>
+
+              <div className={styles.details}>
+                <div className={styles.detailItem}>
+                  <h4>Location</h4>
+                  <div>
+                    <div>{capsule.location.address}, {capsule.location.city}</div>
+                    <div className={styles.subtext}>{capsule.location.country}</div>
                   </div>
                 </div>
 
-                <div className={styles.rightColumn}>
+                <div className={styles.detailItem}>
+                  <h4>Reveal Date</h4>
+                  <div>{formatDate(capsule.revealed_at)}</div>
+                </div>
+
+                {capsule.tags.length > 0 && (
+                  <div className={styles.detailItem}>
+                    <h4>Tags</h4>
+                    <div className={styles.tags}>
+                      {capsule.tags.map((tag) => (
+                        <span key={`${tag.id}-${tag.pivot.capsule_id}`} className={`${styles.tag} ${styles[`tag-${tag.mood}`]}`}>
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.rightColumn}>
+              {(capsule.image_path || capsule.audio_path) && (
+                <div className={styles.mediaSection}>
                   {capsule.image_path && (
-                    <div className={styles.imageContainer}>
+                    <div className={styles.mediaItem}>
                       <h3>Photo</h3>
-                      <img 
-                        src={getMediaUrl(capsule.image_path)} 
-                        alt="Capsule Image" 
-                        className={styles.capsuleImage}
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
+                      <img
+                        src={getMediaUrl(capsule.image_path)}
+                        alt="Capsule"
+                        className={styles.image}
+                        onError={(e) => e.currentTarget.style.display = 'none'}
                       />
                     </div>
                   )}
 
                   {capsule.audio_path && (
-                    <div className={styles.audioContainer}>
+                    <div className={styles.mediaItem}>
                       <h3>Audio Recording</h3>
-                      <audio controls className={styles.audioPlayer}>
-                        {getMediaUrl(capsule.audio_path) && (
-                          <>
-                            <source src={getMediaUrl(capsule.audio_path)} type="audio/mpeg" />
-                            <source src={getMediaUrl(capsule.audio_path)} type="audio/wav" />
-                            <source src={getMediaUrl(capsule.audio_path)} type="audio/ogg" />
-                          </>
-                        )}
-                        Your browser does not support the audio element.
+                      <audio controls className={styles.audio}>
+                        <source src={getMediaUrl(capsule.audio_path)} type="audio/mpeg" />
+                        <source src={getMediaUrl(capsule.audio_path)} type="audio/wav" />
+                        Your browser does not support audio.
                       </audio>
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
-        </div>
-
-        <div className={styles.details}>
-          <div className={styles.detailSection}>
-            <h3>Location</h3>
-            <div className={styles.location}>
-              <div>
-                <div className={styles.locationText}>
-                  {capsule.location.address}, {capsule.location.city}
-                </div>
-                <div className={styles.locationSubtext}>
-                  {capsule.location.country}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {capsule.tags.length > 0 && (
-            <div className={styles.detailSection}>
-              <h3>Tags</h3>
-              <div className={styles.tags}>
-                {capsule.tags.map((tag) => (
-                  <span 
-                    key={tag.id} 
-                    className={`${styles.tag} ${styles[`tag-${tag.mood}`]}`}
-                  >
-                    {tag.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className={styles.detailSection}>
-            <div className={styles.properties}>
-              <div className={styles.property}>
-                <span className={styles.propertyLabel}>Reveal Date:</span>
-                <span className={styles.propertyValue}>
-                  {formatDate(capsule.revealed_at)}
-                </span>
-              </div>
+              )}
             </div>
           </div>
         </div>

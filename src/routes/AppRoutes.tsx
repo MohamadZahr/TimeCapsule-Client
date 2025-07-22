@@ -5,6 +5,7 @@ import AuthPage from '../pages/Auth/AuthPage';
 import PublicWallPage from '../pages/PublicWall/PublicWallPage';
 import CreateCapsulePage from '../pages/CreateCapsule/CreateCapsulePage';
 import PrivateWallPage from '../pages/PrivateWall/PrivateWallPage';
+import CapsuleDetailsPage from '../pages/CapsuleDetails/CapsuleDetailsPage';
 
 const AppRoutes = () => {
    return (
@@ -17,6 +18,7 @@ const AppRoutes = () => {
                <Route path="/PublicWall" element={<PublicWallPage />} />
                <Route path="/PrivateWall" element={<PrivateWallPage />} />
                <Route path="/CreateCapsule" element={<CreateCapsulePage />} />
+               <Route path="/capsule/details" element={<CapsuleDetailsPage />} />
             </Route>
          </Routes>
       </>

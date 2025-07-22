@@ -112,7 +112,7 @@ const CreateCapsulePage: React.FC = () => {
 
       const response = await api.post('/create_capsule', payload);
       console.log('Capsule created successfully:', response.data);
-      navigate('/PublicWall');
+      navigate(-1);
     } catch (error) {
       console.error('Failed to create capsule:', error);
       // You might want to show an error message to the user here
@@ -122,7 +122,7 @@ const CreateCapsulePage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate('/PublicWall');
+    navigate(-1);
   };
 
   return (

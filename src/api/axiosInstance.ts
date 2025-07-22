@@ -1,13 +1,14 @@
-import axios from 'axios';
+import axios from "axios";
 
 export const api = axios.create({
-  baseURL: import.meta.env.API_BASE_URL || 'http://127.0.0.1:8000/api/v0.1',
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/v0.1",
   withCredentials: true,
 });
 
 api.interceptors.request.use(
   (config) => {
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem("user");
     if (user) {
       const { token } = JSON.parse(user);
       if (token) {
